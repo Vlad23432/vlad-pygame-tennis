@@ -1,7 +1,16 @@
-import pygame # Импорт модуля пайгейм
+import pygame  # Импорт модуля пайгейм
 import random
 pygame.init()
 
+score = 0
+rounds = 3
+def draw_text(screen, text,size, x, y, color):
+    font_name = pygame.font.match_font('arial')
+    font = pygame.font.Font(font_name, size)
+    text_image = font.render(text, True, color)
+    text_rect = text_image.get_rect()
+    text_rect.center = (x, y)
+    screen.blit(text_image, text_rect)
 width = 1366
 height = 768
 fps = 60
@@ -16,6 +25,7 @@ GREEN = '#008000'
 BLUE = '#0000FF'
 CYAN = '#00FFFF'
 
+sound = pygame.mixer.music.load('Сектор Газа - Банка (minus 4).mp3')
 img = pygame.image.load('img.png')
 img = pygame.transform.scale(img, (50, 50))
 img_rect = img.get_rect()
@@ -41,6 +51,8 @@ while run:
     screen.fill(CYAN)
     screen.blit(img, img_rect)
     screen.blit(platform, platform_rect)
+    draw_text(screen, 'score: ' + str(score), 40, width / 2, 50, RED)
+    draw_text(screen, 'rounds: ' + str(rounds), 40, width - 100, 50, RED)
 
     img_rect.x += speedX
     img_rect.y += speedY
@@ -51,8 +63,14 @@ while run:
         platform_rect.x += 10
 
     if img_rect.colliderect(platform_rect):
+        score += 1
         speedY = -speedY
-
+    if img_rect.bottom > height:
+        rounds -= 1
+        if rounds <= 0:
+            run = False
+        img_rect.y = 50
+        img_rect.x = random.randint(50, width - 50)
     if img_rect.top < 0:
         speedY = -speedY
     if img_rect.left < 0:
