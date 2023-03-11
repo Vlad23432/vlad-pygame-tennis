@@ -1,6 +1,9 @@
-import pygame  # Импорт модуля пайгейм
+import pygame # Импорт модуля пайгейм
 import random
 pygame.init()
+
+ping = pygame.mixer.Sound('rezino_yy-myach-z_uk-dets_a.mp3')
+loose = pygame.mixer.Sound('6d64cbf7b17425e.mp3')
 
 score = 0
 rounds = 3
@@ -25,7 +28,6 @@ GREEN = '#008000'
 BLUE = '#0000FF'
 CYAN = '#00FFFF'
 
-sound = pygame.mixer.music.load('Сектор Газа - Банка (minus 4).mp3')
 img = pygame.image.load('img.png')
 img = pygame.transform.scale(img, (50, 50))
 img_rect = img.get_rect()
@@ -63,10 +65,12 @@ while run:
         platform_rect.x += 10
 
     if img_rect.colliderect(platform_rect):
+        ping.play()
         score += 1
         speedY = -speedY
     if img_rect.bottom > height:
         rounds -= 1
+        loose.play()
         if rounds <= 0:
             run = False
         img_rect.y = 50
