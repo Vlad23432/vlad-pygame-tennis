@@ -2,11 +2,16 @@ import pygame # Импорт модуля пайгейм
 import random
 pygame.init()
 
-ping = pygame.mixer.Sound('rezino_yy-myach-z_uk-dets_a.mp3')
-loose = pygame.mixer.Sound('6d64cbf7b17425e.mp3')
+ping = pygame.mixer.Sound('otskok.mp3')
+loose = pygame.mixer.Sound('loose.mp3')
+
+pygame.mixer.music.load('fonovaya_music.mp3')
+pygame.mixer.music.set_volume(0.5)
+pygame.mixer.music.play(-1)
 
 score = 0
 rounds = 3
+
 def draw_text(screen, text,size, x, y, color):
     font_name = pygame.font.match_font('arial')
     font = pygame.font.Font(font_name, size)
@@ -31,6 +36,37 @@ CYAN = '#00FFFF'
 img = pygame.image.load('img.png')
 img = pygame.transform.scale(img, (50, 50))
 img_rect = img.get_rect()
+
+if score == 10:
+    img2 = pygame.image.load('2png.jpg')
+    img2 = pygame.transform.scale(img2, (50, 50))
+    img2_rect = img2.get_rect()
+    screen.blit(img2, img2_rect)
+    speedX = 10
+    speedY = 10
+    img2_rect.x += speedX
+    img2_rect.y += speedY
+    platform = pygame.image.load('platform.png')
+    platform_rect = platform.get_rect()
+    if img2_rect.colliderect(platform_rect):
+        ping.play()
+        score += 1
+    if img2_rect.bottom > height:
+        rounds -= 1
+        loose.play()
+    if rounds <= 0:
+        run = False
+        img2_rect.y = 50
+        img2_rect.x = random.randint(50, width - 50)
+    if img2_rect.top < 0:
+        speedY = -speedY
+    if img2_rect.left < 0:
+        speedX = -speedX
+    if img2_rect.right > width:
+        speedX = -speedX
+    if img2_rect.bottom > height:
+        img2_rect.x = random.randint(100, width - 100)
+        img2_rect.y = 100
 
 platform = pygame.image.load('platform.png')
 platform_rect = platform.get_rect()
@@ -67,10 +103,13 @@ while run:
     if img_rect.colliderect(platform_rect):
         ping.play()
         score += 1
+
         speedY = -speedY
+
     if img_rect.bottom > height:
         rounds -= 1
         loose.play()
+
         if rounds <= 0:
             run = False
         img_rect.y = 50
