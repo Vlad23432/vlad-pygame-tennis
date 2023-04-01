@@ -1,5 +1,5 @@
 import pygame # Импорт модуля пайгейм
-import random
+import myachik
 pygame.init()
 
 ping = pygame.mixer.Sound('otskok.mp3')
@@ -33,49 +33,13 @@ GREEN = '#008000'
 BLUE = '#0000FF'
 CYAN = '#00FFFF'
 
-img = pygame.image.load('img.png')
-img = pygame.transform.scale(img, (50, 50))
-img_rect = img.get_rect()
-
-if score == 10:
-    img2 = pygame.image.load('2png.jpg')
-    img2 = pygame.transform.scale(img2, (50, 50))
-    img2_rect = img2.get_rect()
-    screen.blit(img2, img2_rect)
-    speedX = 10
-    speedY = 10
-    img2_rect.x += speedX
-    img2_rect.y += speedY
-    platform = pygame.image.load('platform.png')
-    platform_rect = platform.get_rect()
-    if img2_rect.colliderect(platform_rect):
-        ping.play()
-        score += 1
-    if img2_rect.bottom > height:
-        rounds -= 1
-        loose.play()
-    if rounds <= 0:
-        run = False
-        img2_rect.y = 50
-        img2_rect.x = random.randint(50, width - 50)
-    if img2_rect.top < 0:
-        speedY = -speedY
-    if img2_rect.left < 0:
-        speedX = -speedX
-    if img2_rect.right > width:
-        speedX = -speedX
-    if img2_rect.bottom > height:
-        img2_rect.x = random.randint(100, width - 100)
-        img2_rect.y = 100
+ball = myachik.Ball((width, height))
 
 platform = pygame.image.load('platform.png')
 platform_rect = platform.get_rect()
 
 platform_rect.x = width / 2 - platform.get_width() / 2
 platform_rect.y = height - 60
-
-speedX = 10
-speedY = 10
 
 clock = pygame.time.Clock()
 run = True
@@ -87,42 +51,28 @@ while run:
     key = pygame.key.get_pressed()
 
     screen.fill(CYAN)
-    screen.blit(img, img_rect)
+    ball.update(screen)
     screen.blit(platform, platform_rect)
     draw_text(screen, 'score: ' + str(score), 40, width / 2, 50, RED)
     draw_text(screen, 'rounds: ' + str(rounds), 40, width - 100, 50, RED)
-
-    img_rect.x += speedX
-    img_rect.y += speedY
 
     if key[pygame.K_LEFT] and platform_rect.left > 0:
         platform_rect.x -= 10
     if key[pygame.K_RIGHT] and platform_rect.right < width:
         platform_rect.x += 10
 
-    if img_rect.colliderect(platform_rect):
+    if ball.rect.colliderect(platform_rect):
         ping.play()
         score += 1
 
-        speedY = -speedY
+        ball.speedY = -ball.speedY
 
-    if img_rect.bottom > height:
+    if ball.rect.bottom > height:
         rounds -= 1
         loose.play()
-
         if rounds <= 0:
             run = False
-        img_rect.y = 50
-        img_rect.x = random.randint(50, width - 50)
-    if img_rect.top < 0:
-        speedY = -speedY
-    if img_rect.left < 0:
-        speedX = -speedX
-    if img_rect.right > width:
-        speedX = -speedX
-    if img_rect.bottom > height:
-        img_rect.x = random.randint(100, width - 100)
-        img_rect.y = 100
-        #run = False
+        ball.respawn()
+
     pygame.display.update()
 pygame.quit()
